@@ -4,7 +4,7 @@ import { DiscordChannel } from './channels/discord.channel';
 export function createNotifier(): Notifier {
   const notifier = new Notifier();
 
-  const discordWebhook = process.env.DISCORD_WEBHOOK_API;
+  const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
   if (discordWebhook) {
     notifier.addChannel(new DiscordChannel(discordWebhook));
   }

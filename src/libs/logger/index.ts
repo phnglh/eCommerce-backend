@@ -1,8 +1,8 @@
-import winston from "winston";
-import config from "../../config";
+import winston from 'winston';
+import config from '../../config';
 
 const logLevels = {
-  error: 0, 
+  error: 0,
   warning: 1,
   info: 2,
   http: 3,
@@ -15,15 +15,18 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.errors({ stack: true }),
     winston.format.timestamp({
-      format: "YYYY-MM-DD hh:mm:ss.SSS A",
+      format: 'YYYY-MM-DD hh:mm:ss.SSS A',
     }),
     winston.format.printf(
       ({ timestamp, level, message, logMetadata, stack }) => {
-        return `${timestamp} ${level}: ${logMetadata || ""} ${message} ${stack || ""}`;
+        return `${timestamp} ${level}: ${logMetadata || ''} ${message} ${stack || ''}`;
       },
     ),
   ),
-  transports: [new winston.transports.Console(), new winston.transports.File({filename: "logs/app.logs"})],
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'logs/app.logs' }),
+  ],
 });
 
 export default logger;

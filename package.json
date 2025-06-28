@@ -10,6 +10,10 @@
     "serve": "ts-node src/server.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "check-format": "prettier --check \"src/**/*.ts\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -24,15 +28,25 @@
     "errorhandler": "^1.5.1",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "mongoose": "^8.16.1",
     "morgan": "^1.10.0",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.25",
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "@eslint/json": "^0.12.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/errorhandler": "^1.5.3",
     "@types/morgan": "^1.9.10",
+    "eslint": "^9.30.0",
+    "globals": "^16.2.0",
+    "prettier": "3.6.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0"
   }
 }

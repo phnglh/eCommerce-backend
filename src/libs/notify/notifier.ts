@@ -8,8 +8,8 @@ export class Notifier {
   }
 
   async notifyAll(message: string) {
-    for (const channel of this.channels) {
-      await channel.send(message);
-    }
+    await Promise.allSettled(
+      this.channels.map((channel) => channel.send(message)),
+    );
   }
 }

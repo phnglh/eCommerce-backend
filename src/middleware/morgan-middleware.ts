@@ -1,8 +1,8 @@
-import morgan from "morgan";
-import logger from "../libs/logger";
+import morgan from 'morgan';
+import logger from '../libs/logger';
 
 const morganMiddleware = morgan(
-  ":method :url :status :res[content-length] - :response-time ms",
+  ':method :url :status :res[content-length] - :response-time ms',
   {
     stream: {
       write: (message) => logger.http(message.trim()),
