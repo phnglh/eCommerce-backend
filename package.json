@@ -13,17 +13,23 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/compression": "^1.8.1",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.4",
     "axios": "^1.10.0",
+    "compression": "^1.8.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.6.0",
+    "errorhandler": "^1.5.1",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
+    "@types/errorhandler": "^1.5.3",
     "@types/morgan": "^1.9.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
