@@ -6,11 +6,11 @@ import routes from './routes';
 import errorHandler from "errorhandler"
 import compression from 'compression';
 import cookieParser from "cookie-parser"
+import helmet from 'helmet';
 
 const app: Application = express();
 
   app
-    .disable("x-powered-by")
     .use(morganMiddleware)
     .use(compression({
       threshold: 100*100,
@@ -24,7 +24,8 @@ const app: Application = express();
       methods: ["GET,POST,PATCH,DELETE"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"] 
-    }));
+    }))
+    .use(helmet())
 
    app.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ ok: true, environment: config.env });
