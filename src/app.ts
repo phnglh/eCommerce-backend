@@ -1,8 +1,8 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from 'express';
 import morganMiddleware from './middleware/morgan-middleware';
 import cors from 'cors';
 import config from './config';
-import routes from './routes';
+import routes from './routes/v1';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -33,11 +33,8 @@ app
   )
   .use(helmet());
 
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ ok: true, environment: config.env });
-});
 
-app.use(config.api.prefix, routes());
+app.use(`${config.api.prefix}/v1`, routes());
 
 
 app.use(errorHandler());
