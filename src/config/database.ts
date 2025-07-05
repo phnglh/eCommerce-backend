@@ -10,7 +10,9 @@ class Database {
   }
 
   private connect() {
-    mongoose.set('debug', { color: true });
+    if (process.env.NODE_ENV === 'development') {
+      mongoose.set('debug', { color: true });
+    }
 
     mongoose
       .connect(config.databaseURL, {

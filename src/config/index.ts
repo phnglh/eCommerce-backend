@@ -8,57 +8,60 @@ if (envFound.error) {
 }
 
 export default {
-  // core
+  // Core app info
   appName: process.env.APP_NAME,
   env: process.env.NODE_ENV,
   port: process.env.PORT,
 
-  /**
-   * That long string from mlab
-   */
+  // MongoDB connection
   databaseURL: process.env.MONGODB_URI || '',
 
-  /**
-   * Your secret sauce
-   */
-  jwtSecret: process.env.JWT_SECRET,
-  jwtAlgorithm: process.env.JWT_ALGO,
-
-  /**
-   * Used by winston logger
-   */
+  // Logging
   logs: {
     level: process.env.LOG_LEVEL || 'silly',
   },
 
-  /**
-   * Agenda.js stuff
-   */
+  // JWT - for access & refresh token (asymmetric keys)
+  jwt: {
+    algorithm: process.env.JWT_ALGORITHM || 'RS256',
+    accessTokenExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '3d',
+    refreshTokenExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+  },
+
+  // Symmetric encryption for privateKey stored in DB
+  encryption: {
+    algorithm: process.env.ALGORITHM || 'aes-256-cbc',
+    ivLength: parseInt(process.env.IV_LENGTH || '16'),
+    secretKey: process.env.SECRET_KEY || '',
+  },
+
+  // Agenda job settings
   agenda: {
     dbCollection: process.env.AGENDA_DB_COLLECTION,
     pooltime: process.env.AGENDA_POOL_TIME,
     concurrency: process.env.AGENDA_CONCURRENCY,
   },
 
-  /**
-   * Agendash config
-   */
+  // Agendash dashboard
   agendash: {
     user: 'agendash',
     password: '123456',
   },
-  /**
-   * API configs
-   */
+
+  // API settings
   api: {
     prefix: '/api',
   },
-  /**
-   * Mailgun email credentials
-   */
+
+  // Mailgun email service
   emails: {
     apiKey: process.env.MAILGUN_API_KEY,
     apiUsername: process.env.MAILGUN_USERNAME,
     domain: process.env.MAILGUN_DOMAIN,
+  },
+
+  // Discord webhook (optional for alerts/logs)
+  discord: {
+    webhookUrl: process.env.DISCORD_WEBHOOK_URL,
   },
 };
