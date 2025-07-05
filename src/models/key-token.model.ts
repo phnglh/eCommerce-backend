@@ -1,12 +1,12 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document, Types } from 'mongoose';
 
-const DOCUMENT_NAME = "KeyToken";
-const COLLECTION_NAME = "KeyTokens";
+const DOCUMENT_NAME = 'KeyToken';
+const COLLECTION_NAME = 'KeyTokens';
 
 export interface KeyToken extends Document {
-  user: Types.ObjectId; 
+  user: Types.ObjectId;
   publicKey: string;
-  refreshToken: string[]; 
+  refreshToken: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,21 +16,21 @@ const keyTokenSchema = new Schema<KeyToken>(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Shop",
+      ref: 'Shop',
     },
     publicKey: {
       type: String,
       required: true,
     },
     refreshToken: {
-      type: [String], 
+      type: [String],
       default: [],
     },
   },
   {
     timestamps: true,
     collection: COLLECTION_NAME,
-  }
+  },
 );
 
 export const KeyTokenModel = model<KeyToken>(DOCUMENT_NAME, keyTokenSchema);

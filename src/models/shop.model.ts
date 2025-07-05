@@ -1,7 +1,7 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from 'mongoose';
 
-const DOCUMENT_NAME = "Shop";
-const COLLECTION_NAME = "Shops";
+const DOCUMENT_NAME = 'Shop';
+const COLLECTION_NAME = 'Shops';
 
 export interface Shop extends Document {
   name: string;
@@ -30,13 +30,13 @@ const shopSchema = new Schema<Shop>(
     },
     roles: {
       type: [String],
-      required: true
-    }
+      required: true,
+    },
   },
   {
     timestamps: true,
     collection: COLLECTION_NAME,
-  }
+  },
 );
 
 export const ShopModel = model<Shop>(DOCUMENT_NAME, shopSchema);

@@ -1,4 +1,4 @@
-import {  Request, Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
 import config from '../../config';
 import auth from './auth';
 import { apiKey, permissions } from '../../utils/auth/checkAuth';

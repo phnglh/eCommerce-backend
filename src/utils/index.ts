@@ -1,7 +1,7 @@
-import _ from "lodash"
+import _ from 'lodash';
 
-const getInfoData = ({fields = [], object = {}})=> {
- return _.pick(object, fields)
-}
+const getInfoData = ({ fields = [], object = {} }) => {
+  return _.pick(object, fields);
+};
 
-export  {getInfoData}
+export { getInfoData };

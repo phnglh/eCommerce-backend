@@ -1,17 +1,14 @@
 import ShopService from '../services/shop.service';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
+import { CREATED } from '../utils/response/successResponse';
 
 class AccessController {
-  async signUp(req: Request, res: Response, next: NextFunction) {
-    try {
-     const { name, email, password } = req.body;
+  async signUp(req: Request, res: Response) {
+    const { name, email, password } = req.body;
 
-      const result = await ShopService.signUp({ name, email, password });
+    const result = await ShopService.signUp({ name, email, password });
 
-       res.status(201).json(result); 
-    } catch (error) {
-      next(error);
-    }
+    return CREATED(res, 'Shop created successfully', result);
   }
 }
 

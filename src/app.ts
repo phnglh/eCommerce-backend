@@ -7,7 +7,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import './config/database';
-import { HttpError } from './utils/httpError';
+import { ERROR } from './utils/response/errorResponse';
 // import errorHandler from "errorhandler"
 
 const app: Application = express();
@@ -39,24 +39,22 @@ app.use(`${config.api.prefix}/v1`, routes());
 
 // Not found handler
 app.use((req, res, next: NextFunction) => {
-  next(new HttpError('Not Found', 404));
+  next(new ERROR(res, 'Not Found', 404));
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const statusCode = typeof err.status === 'number' ? err.status : 500;
 
-   res.status(statusCode).json({
+  res.status(statusCode).json({
     code: statusCode,
     message: err.message || 'Internal Server Error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 
-
 // if (process.env.NODE_ENV === 'development') {
-//   app.use(errorHandler()); 
+//   app.use(errorHandler());
 // }
-
 
 export default app;
