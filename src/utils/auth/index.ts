@@ -1,29 +1,40 @@
-import JWT from "jsonwebtoken"
-const createTokenPair = async(payload, publicKey, privateKey) => {
+import JWT from 'jsonwebtoken';
+
+const createTokenPair = async (
+  payload: object,
+  publicKey: string,
+  privateKey: string,
+) => {
   try {
-    const accessToken = await JWT.sign(payload,privateKey, {
-      algorithm: "RS256",
-      expiresIn: "3d"
-    })
+    const accessToken = JWT.sign(payload, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: '3d',
+    });
 
-    const refreshToken = await JWT.sign(payload, privateKey, {
-      algorithm: "RS256",
-      expiresIn: "7d"
-    })
+    const refreshToken = JWT.sign(payload, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: '7d',
+    });
 
-    // JWT.verify(accessToken, publicKey, (error, decode)=> {
-    //   if(error) {
-    //     console.log(error)
-    //   } else{
-    //     console.log(decode)
-    //   }
+    JWT.verify(accessToken, publicKey, {
+      algorithms: ['RS256'],
+    });
 
-    // })
-    return {accessToken, refreshToken}
+    return { accessToken, refreshToken };
   } catch (error) {
-    return error
+    throw new Error(`CreateTokenPair Error: ${(error as Error).message}`);
   }
-}
+};
 
+const verifyToken = (token: string, publicKey: string) => {
+  try {
+    const decoded = JWT.verify(token, publicKey, {
+      algorithms: ['RS256'],
+    });
+    return { valid: true, payload: decoded };
+  } catch (error) {
+    return { valid: false, error };
+  }
+};
 
-export {createTokenPair}
+export { createTokenPair, verifyToken };
