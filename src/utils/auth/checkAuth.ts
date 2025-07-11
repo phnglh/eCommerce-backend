@@ -2,13 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import logger from '../../libs/logger';
 import { findById } from '../../services/api-key.service';
 import { ApiKey } from '../../models/api-key.model';
+import { HEADERS } from '../../contants';
+import { KeyToken } from '../../models/key-token.model';
 
-const HEADERS = {
-  API_KEY: 'x-api-key',
-  AUTHORIZATION: 'authorization',
-};
+
 export interface AuthRequest extends Request {
   objKey?: ApiKey;
+  keyStore?: KeyToken 
 }
 const apiKey = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -42,8 +42,6 @@ const permissions = (permissions: string) => {
         message: 'Permissions dinied',
       });
     }
-
-    console.log(req.objKey.permissions);
 
     const inValid = req.objKey.permissions.includes(permissions);
 

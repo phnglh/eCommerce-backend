@@ -1,7 +1,14 @@
 import JWT from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
+import { Types } from 'mongoose';
+
+interface AuthPayload extends JwtPayload {
+  userId: string | Types.ObjectId;
+  email?: string;
+}
 
 const createTokenPair = async (
-  payload: object,
+  payload: AuthPayload,
   publicKey: string,
   privateKey: string,
 ) => {
@@ -31,7 +38,7 @@ const verifyToken = (token: string, publicKey: string) => {
     const decoded = JWT.verify(token, publicKey, {
       algorithms: ['RS256'],
     });
-    return { valid: true, payload: decoded };
+    return { valid: true, payload: decoded as AuthPayload };
   } catch (error) {
     return { valid: false, error };
   }

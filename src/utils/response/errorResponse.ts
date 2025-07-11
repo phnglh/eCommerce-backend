@@ -76,4 +76,30 @@ export const CONFLICTERROR = (
   }).send(res);
 };
 
+export const BadRequestError = (
+  message = HTTP_STATUS_MESSAGE.BAD_REQUEST,
+  status = HTTP_STATUS_CODE.BAD_REQUEST,
+  errors?: any,
+  options: Record<string, any> = {},
+) => {
+  new ErrorResponse({ message, status, errors, options });
+};
+
+export const AuthFailureError = (
+  message = HTTP_STATUS_MESSAGE.UNAUTHORIZED,
+  status = HTTP_STATUS_CODE.UNAUTHORIZED,
+  errors?: any,
+  options: Record<string, any> = {},
+) => {
+  new ErrorResponse({ message, status, errors, options });
+};
+
+export const NotFoundError = (
+  message = HTTP_STATUS_MESSAGE.NOT_FOUND,
+  status = HTTP_STATUS_CODE.NOT_FOUND,
+  errors?: any,
+  options: Record<string, any> = {}
+) => {
+  new ErrorResponse({ message, status, errors, options })
+}
 export default ErrorResponse;

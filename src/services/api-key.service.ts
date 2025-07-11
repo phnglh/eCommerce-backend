@@ -8,7 +8,6 @@ const findById = async (key: string) => {
     apiKey: key,
     status: 'active',
   }).lean();
-  console.log(objKey);
 
   return objKey;
 };
