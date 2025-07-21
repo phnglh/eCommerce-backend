@@ -2,23 +2,76 @@ import { ShopModel } from '../models/shop.model';
 import * as bcrypt from 'bcrypt';
 import crypto from 'node:crypto';
 import KeyTokenService from './key-token.service';
-import { createTokenPair } from '../utils/auth';
+import { createTokenPair, verifyToken } from '../utils/auth';
 import { getInfoData } from '../utils';
 import PrivateKeyService from './private-key.server';
 import { Roles } from '../contants/role';
 import ErrorResponse, {
   AuthFailureError,
   BadRequestError,
+  ForbiddenError,
 } from '../utils/response/errorResponse';
 import { HTTP_STATUS_CODE } from '../contants/httpStatusCode';
 import { findByEmail } from './shop.service';
 
 class AccessService {
-  static logOut = async ({keyStore}) => {
-    const delKey = await KeyTokenService.removeKeyById({id: keyStore._id})
+  static handleRefreshToken = async ({ refreshToken }) => {
+    const usedToken = await KeyTokenService.findByRefreshTokenUsed({
+      refreshToken,
+    });
 
-    return delKey
-  }
+    if (usedToken) {
+      const privateKey = await PrivateKeyService.getPrivateKey(usedToken.user);
+
+      const {
+        payload: { userId },
+      } = verifyToken(refreshToken, privateKey);
+
+      console.warn('Replay attack detected for user:', userId);
+
+      await KeyTokenService.remoteKeyByUserId({ userId });
+
+      throw new ForbiddenError(
+        'Refresh token has been used. Please login again.',
+      );
+    }
+
+    const holderToken = await KeyTokenService.findByRefreshToken({
+      refreshToken,
+    });
+
+    if (!holderToken) {
+      throw new BadRequestError('Refresh token not found.');
+    }
+
+    const privateKey = await PrivateKeyService.getPrivateKey(holderToken.user);
+
+    const {
+      payload: { userId, email },
+    } = verifyToken(refreshToken, privateKey);
+
+    const tokens = await createTokenPair(
+      { userId, email },
+      holderToken.publicKey,
+      privateKey,
+    );
+
+    await KeyTokenService.updateOrInsertKeyToken({
+      userId,
+      refreshToken: tokens.refreshToken,
+      refreshTokenUsed: [...holderToken.refreshTokensUsed, refreshToken],
+    });
+
+    return {
+      user: { userId, email },
+      tokens,
+    };
+  };
+  static logOut = async ({ keyStore }) => {
+    const delKey = await KeyTokenService.removeKeyById({ id: keyStore._id });
+
+    return delKey;
+  };
   static signUp = async ({
     name,
     email,
@@ -87,68 +140,67 @@ class AccessService {
       };
     }
   };
-static signIn = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
-  const foundShop = await findByEmail({ email });
-  if (!foundShop) throw BadRequestError('Shop not registered!');
+  static signIn = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) throw BadRequestError('Shop not registered!');
 
-  const match = await bcrypt.compare(password, foundShop.password);
-  if (!match) throw AuthFailureError('Authentication error!');
+    const match = await bcrypt.compare(password, foundShop.password);
+    if (!match) throw AuthFailureError('Authentication error!');
 
-  const userId = foundShop._id.toString();
+    const userId = foundShop._id.toString();
 
-  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 4096,
-    publicKeyEncoding: {
-      type: 'pkcs1',
-      format: 'pem',
-    },
-    privateKeyEncoding: {
-      type: 'pkcs1',
-      format: 'pem',
-    },
-  });
-
-  const publicKeyString = await KeyTokenService.createKeyPair({
-    userId,
-    publicKey,
-  });
-
-  await PrivateKeyService.savePrivateKey(userId, privateKey);
-
-  if (!publicKeyString) {
-    throw new ErrorResponse({
-      message: 'Failed to create public key',
-      status: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: 'pkcs1',
+        format: 'pem',
+      },
+      privateKeyEncoding: {
+        type: 'pkcs1',
+        format: 'pem',
+      },
     });
-  }
 
-  const tokens = await createTokenPair(
-    { userId, email },
-    publicKeyString,
-    privateKey
-  );
+    const publicKeyString = await KeyTokenService.createKeyPair({
+      userId,
+      publicKey,
+    });
 
-  await KeyTokenService.createKeyPair({
-    userId,
-    publicKey,
-    refreshToken: tokens.refreshToken,
-  });
+    await PrivateKeyService.savePrivateKey(userId, privateKey);
 
-  return {
-    shop: getInfoData({
-      fields: ['_id', 'name', 'email'],
-      object: foundShop,
-    }),
-    tokens,
+    if (!publicKeyString) {
+      throw new ErrorResponse({
+        message: 'Failed to create public key',
+        status: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    const tokens = await createTokenPair(
+      { userId, email },
+      publicKeyString,
+      privateKey,
+    );
+
+    await KeyTokenService.createKeyPair({
+      userId,
+      publicKey,
+      refreshToken: tokens.refreshToken,
+    });
+
+    return {
+      shop: getInfoData({
+        fields: ['_id', 'name', 'email'],
+        object: foundShop,
+      }),
+      tokens,
+    };
   };
-};
-
 }
 
-export default AccessService
+export default AccessService;

@@ -9,8 +9,12 @@ export default (app: Router) => {
   router.post('/signup', asyncHandler(accessController.signUp));
   router.post('/signin', asyncHandler(accessController.signIn));
 
-  router.use(authentication)
+  router.use(authentication);
   router.post('/logout', asyncHandler(accessController.logOut));
+  router.post(
+    '/refresh-token',
+    asyncHandler(accessController.handleRefreshToken),
+  );
 
   app.use('/auth', router);
 };

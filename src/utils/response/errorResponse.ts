@@ -98,8 +98,17 @@ export const NotFoundError = (
   message = HTTP_STATUS_MESSAGE.NOT_FOUND,
   status = HTTP_STATUS_CODE.NOT_FOUND,
   errors?: any,
-  options: Record<string, any> = {}
+  options: Record<string, any> = {},
 ) => {
-  new ErrorResponse({ message, status, errors, options })
-}
+  new ErrorResponse({ message, status, errors, options });
+};
+export const ForbiddenError = (
+  message = HTTP_STATUS_MESSAGE.FORBIDDEN,
+  status = HTTP_STATUS_CODE.FORBIDDEN,
+  errors?: any,
+  options: Record<string, any> = {},
+) => {
+  new ErrorResponse({ message, status, errors, options });
+};
+
 export default ErrorResponse;

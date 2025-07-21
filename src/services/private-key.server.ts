@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { PrivateKeyModel } from '../models/private-key.model';
 import config from '../config';
+import { Types } from 'mongoose';
 
 class PrivateKeyService {
   static encryptPrivateKey = (privateKey: string): string => {
@@ -36,7 +37,9 @@ class PrivateKeyService {
     return await PrivateKeyModel.findOneAndUpdate(filter, update, options);
   };
 
-  static getPrivateKey = async (userId: string): Promise<string | null> => {
+  static getPrivateKey = async (
+    userId: Types.ObjectId,
+  ): Promise<string | null> => {
     const doc = await PrivateKeyModel.findOne({ user: userId }).lean();
     if (!doc) return null;
     return this.decryptPrivateKey(doc.encryptedPrivateKey);

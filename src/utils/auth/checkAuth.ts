@@ -5,10 +5,9 @@ import { ApiKey } from '../../models/api-key.model';
 import { HEADERS } from '../../contants';
 import { KeyToken } from '../../models/key-token.model';
 
-
 export interface AuthRequest extends Request {
   objKey?: ApiKey;
-  keyStore?: KeyToken 
+  keyStore?: KeyToken;
 }
 const apiKey = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
